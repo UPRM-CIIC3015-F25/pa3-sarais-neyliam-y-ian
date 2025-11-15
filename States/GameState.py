@@ -554,7 +554,47 @@ class GameState(State):
     #   with the ones after it. Depending on the mode, sort by rank first or suit first, swapping cards when needed
     #   until the entire hand is ordered correctly.
     def SortCards(self, sort_by: str = "suit"):
-        suitOrder = [Suit.HEARTS, Suit.CLUBS, Suit.DIAMONDS, Suit.SPADES]         # Define the order of suits
+        suitOrder = [Suit.HEARTS, Suit.CLUBS, Suit.DIAMONDS, Suit.SPADES]         # Para comparar el orden
+        self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
+
+        def suit_idx(suit):         #funcion para saber el indice del suit y poder hacer la comparacion
+            for i in range(len(suitOrder)):
+                if suitOrder[i] == suit:
+                    return i
+            return float("inf")     #porciacaso pero no debe llegar a este return
+
+        #funcion para comparar si es rank o suit
+        def compare_card(card1, card2):
+            if sort_by == "rank":
+                #ordenar por rank
+                if card1.rank.value > card2.rank.value:
+                    return False
+                if card1.rank.value < card2.rank.value:
+                    return True
+                else:
+                    # si tienen el mismo rank decide con el suit
+                    return suit_idx(card1.suit) < suit_idx(card2.suit)
+
+            else:
+                #ordenar por suit
+                if suit_idx(card1.suit) > suit_idx(card2.suit):
+                    return False
+                if suit_idx(card1.suit) < suit_idx(card2.suit):
+                    return True
+                else:
+                    # si tienen el mismo suit decide con el rank
+                    return card1.rank.value < card2.rank.value
+       #sort manual
+        number = len(self.hand)
+        for i in range(number):
+            for j in range(i+1, number):
+                # si están fuera de orden, las swapeamos
+                if not compare_card(self.hand[i], self.hand[j]):
+                    x = self.hand[i]
+                    self.hand[i] = self.hand[j]
+                    self.hand[j] = x
+
+        #final actualizar el swap
         self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
 
     def checkHoverCards(self):
