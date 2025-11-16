@@ -556,7 +556,6 @@ class GameState(State):
 
     def SortCards(self, sort_by: str = "suit"):
         suitOrder = [Suit.HEARTS, Suit.CLUBS, Suit.DIAMONDS, Suit.SPADES]         # Para comparar el orden
-        self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
 
         def suit_idx(suit):         #funcion para saber el indice del suit y poder hacer la comparacion
             for i in range(len(suitOrder)):
