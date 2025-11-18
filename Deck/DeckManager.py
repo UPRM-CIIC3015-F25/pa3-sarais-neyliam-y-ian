@@ -144,20 +144,24 @@ class DeckManager:
     #   object for each valid combination. If a matching image is not found, skip that card.
     #   Add each created Card to a list called 'deck' and return the completed list at the end.
     def createDeck(self, subLevel: SubLevel = None):
+
         cardImages = self.load_card_images(subLevel)
-
         deck = []
-        suits = ['Heart', "Diamonds","Clubs", "Spades" ]
-        ranks = ['2','3','4','5','6','7','8','9','10',"A", "K", "Q", "J"]
+        #suits y ranks pa armar todas las cartas
+        suits = ['Hearts', "Diamonds", "Clubs", "Spades"]
+        ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', "J", "Q", "K", "A"]
 
+        #loop pa combinar cada suit con cada rank
         for suit in suits:
             for rank in ranks:
+                #agarro la img de esa carta
                 image = cardImages[(suit, rank)]
-
                 if image is None:
-                    continue
+                    continue  #si no hay img
 
+                #carta en la lst del deck
                 deck.append(Card(suit=suit, rank=rank, image=image))
+
         return deck
 
     # TODO (TASK 5.1): Complete the priceMap variable by assigning each joker a price.

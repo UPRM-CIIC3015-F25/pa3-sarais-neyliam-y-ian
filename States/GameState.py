@@ -563,38 +563,30 @@ class GameState(State):
                     return i
             return float("inf")     #porciacaso pero no debe llegar a este return
 
-        #funcion para comparar si es rank o suit
-        def compare_card(card1, card2):
-            if sort_by == "rank":
-                #ordenar por rank
-                if card1.rank.value > card2.rank.value:
-                    return False
-                if card1.rank.value < card2.rank.value:
-                    return True
-                else:
-                    # si tienen el mismo rank decide con el suit
-                    return suit_idx(card1.suit) < suit_idx(card2.suit)
-
-            else:
-                #ordenar por suit
-                if suit_idx(card1.suit) > suit_idx(card2.suit):
-                    return False
-                if suit_idx(card1.suit) < suit_idx(card2.suit):
-                    return True
-                else:
-                    # si tienen el mismo suit decide con el rank
-                    return card1.rank.value < card2.rank.value
-       #sort manual
         number = len(self.hand)
         for i in range(number):
             for j in range(i+1, number):
-                # si están fuera de orden, las swapeamos
-                if not compare_card(self.hand[i], self.hand[j]):
-                    x = self.hand[i]
-                    self.hand[i] = self.hand[j]
-                    self.hand[j] = x
+                if sort_by == "rank":
+                    #comparar por rank
+                    if self.hand[i].rank.value > self.hand[j].rank.value:
+                        self.hand[i], self.hand[j] = self.hand[j], self.hand[i]  #switch
 
-        #final actualizar el swap
+                    elif self.hand[i].rank.value == self.hand[j].rank.value:
+                        # Si tienen el mismo rank, por suit
+                        if suit_idx(self.hand[i].suit) > suit_idx(self.hand[j].suit):
+                            self.hand[i], self.hand[j] = self.hand[j], self.hand[i]
+
+                else:  #si es igual a "suit"
+                    #comparar por suit
+                    if suit_idx(self.hand[i].suit) > suit_idx(self.hand[j].suit):
+                        self.hand[i], self.hand[j] = self.hand[j], self.hand[i]
+
+                    elif suit_idx(self.hand[i].suit) == suit_idx(self.hand[j].suit):
+                        #si es el mismo suit, por rank
+                        if self.hand[i].rank.value > self.hand[j].rank.value:
+                            self.hand[i], self.hand[j] = self.hand[j], self.hand[i]
+
+        #update
         self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
 
     def checkHoverCards(self):
@@ -857,4 +849,29 @@ class GameState(State):
     #   recursion finishes, reset card selections, clear any display text or tracking lists, and
     #   update the visual layout of the player's hand.
     def discardCards(self, removeFromHand: bool):
-        self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
+        #si no hay nada en la lst select, reset dicts y refill pa seguir
+        if not self.cardsSelectedList:
+            self.cardsSelectedList = list()  #lst vacía pa las cartas seleccionadas
+            self.cardsSelectedRect = {}  #dict vacío pa los rects
+            self.playedHandNameList = ['']
+            self.ref_hand()  #refill pa completar la mano
+            self.updateCards(400, 520, self.cards, self.hand, scale=1.2)
+            return
+
+        #agarro la primera carta de la lst seleccionada
+        cd = self.cardsSelectedList[0]
+        if removeFromHand and cd in self.hand:
+            self.hand.remove(cd)  #saco la carta de la mano
+            new = State.deckManager.drawCard(self.deck)  #saco una nueva del deck
+            self.hand.append(new)  #meto la nueva pa la mano
+
+        #quito la carta de la lst y sigo recursivo pa las demás
+        self.cardsSelectedList = self.cardsSelectedList[1:]
+        self.discardCards(removeFromHand)
+
+    def ref_hand(self):
+        #refill recursivo pa que la mano quede en len 8
+        if len(self.hand) < 8:
+            new_cd = State.deckManager.drawCard(self.deck)  #new del deck
+            self.hand.append(new_cd)  #meto carta a la lst de la mano
+            self.ref_hand()

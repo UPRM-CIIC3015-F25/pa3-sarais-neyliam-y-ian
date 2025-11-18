@@ -51,7 +51,7 @@ def evaluate_hand(hand: list[Card]):
     #ordeno ranks unicos manualmente
     number = len(unique_ranks)
     for i in range(number):
-        for j in range(i+1, number):
+        for j in range(i + 1, number):
             if unique_ranks[i] > unique_ranks[j]:
                 x = unique_ranks[i]
                 unique_ranks[i] = unique_ranks[j]
@@ -61,7 +61,8 @@ def evaluate_hand(hand: list[Card]):
     is_straight = False
     number = len(unique_ranks)
     for i in range(number - 4):
-        if unique_ranks[i]+1 == unique_ranks[i+1] and unique_ranks[i]+2 == unique_ranks[i+2] and unique_ranks[i]+3 == unique_ranks[i+3] and unique_ranks[i]+4 == unique_ranks[i+4]:
+        if unique_ranks[i] + 1 == unique_ranks[i + 1] and unique_ranks[i] + 2 == unique_ranks[i + 2] and unique_ranks[
+            i] + 3 == unique_ranks[i + 3] and unique_ranks[i] + 4 == unique_ranks[i + 4]:
             is_straight = True
             break
 
@@ -73,33 +74,33 @@ def evaluate_hand(hand: list[Card]):
     #sort los counts de mayor a menor
     number = len(counts)
     for i in range(number):
-        for j in range(i+1, number):
+        for j in range(i + 1, number):
             if counts[i] < counts[j]:
                 x = counts[i]
                 counts[i] = counts[j]
                 counts[j] = x
 
     #decir q es:
+    if is_flush and is_straight:
+        return "Straight Flush"
+    if counts[0] == 4:
+        return "Four of a Kind"
+    if 3 in counts and 2 in counts:
+        return "Full House"
     if is_flush:
         return "Flush"
     if is_straight:
         return "Straight"
     if 3 in counts:
         return "Three of a Kind"
-    if counts[0] == 4:
-        return "Four of a Kind"
-    if is_flush and is_straight:
-        return "Straight Flush"
-    if 2 in counts and 3 in counts:
-        return "Full House"
     #cuando hay dobles
     doble = 0
     for v in counts:
         if v == 2:
             doble += 1
-    if doble == 1:
-        return "One Pair"
     if doble >= 2:
         return "Two Pair"
+    if doble == 1:
+        return "One Pair"
     else:
         return "High Card"
