@@ -535,6 +535,23 @@ class GameState(State):
     #     - A clear base case to stop recursion when all parts are done
     #   Avoid any for/while loops — recursion alone must handle the repetition.
     def calculate_gold_reward(self, playerInfo, stage=0):
+        if stage >= 2:
+            return 0
+        if stage == 0:
+            blind = playerInfo.blindType
+            if blind == "SMALL":
+                base = 4
+            elif blind == "BIG":
+                base = 8
+            else:
+                base = 10
+            return base + self.calculate_gold_reward(playerInfo, stage=1)
+        if stage == 1:
+            score = playerInfo.score
+            target = playerInfo.target
+            raw_overkill = (score - target) / target
+            bonus = min(5, max(0, raw_overkill - 0.5))
+            return int(bonus) + self.calculate_gold_reward(playerInfo, stage=2)
             return 0
 
     def updateCards(self, posX, posY, cardsDict, cardsList, scale=1.5, spacing=90, baseYOffset=-20, leftShift=40):
@@ -594,7 +611,7 @@ class GameState(State):
         for card, rect in self.cards.items():
             if rect.collidepoint(mousePos):
                 break
-    
+
     def drawCardTooltip(self):
         mousePos = pygame.mouse.get_pos()
         for card, rect in self.cards.items():
@@ -622,7 +639,7 @@ class GameState(State):
                 tooltip_y = rect.y - tooltip_h - 10
                 self.screen.blit(tooltip_surf, (tooltip_x, tooltip_y))
                 break
-    
+
     # -------- Play Hand Logic -----------
     def playHand(self):
         if self.playerInfo.amountOfHands == 0: # Check if last hand and failed the round
