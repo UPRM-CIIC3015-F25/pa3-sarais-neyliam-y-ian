@@ -100,6 +100,20 @@ class ShopState(State):
     def activatePlanet(self, planet):
         keys = HAND_SCORES.keys()
 
+    if planet.name == "Sun":
+        for hand_name, stats in HAND_SCORES.items():
+            stats["chips"] += planet.chips
+            stats["multiplier"] += planet.mult
+            stats["level"] += 1
+
+    else:
+        target_hand = planet.description.replace("levels up ", "")
+        for hand_name, stats in HAND_SCORES.items():
+            if hand_name == target_hand:
+                stats["chips"] += planet.chips
+                stats["multiplier"] += planet.mult
+                stats["level"] += 1
+                break
     # ---------- Helpers ----------
     def _wrap_lines(self, text, font, max_width):
         words = text.split()
