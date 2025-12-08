@@ -114,16 +114,12 @@ class LevelManager():
                         self.curSubLevel = self.curLevel[0]
                     self.p.levelFinished = True  # Signal UI to open LevelSelectState
 
-
-        # TODO (TASK 8) - Create a recursive function that finds the next unfinished sublevel.
-        #   It should check each sublevel in order and return the first one that isn’t finished.
-        #   Stop once all have been checked or one is found. Avoid using loops. (USE RECURSIONS)
-        def next_unfinished_sublevel(self, index=0):
-            return None
-
     # TODO (TASK 8) - Create a recursive function that finds the next unfinished sublevel.
     #   It should check each sublevel in order and return the first one that isn’t finished.
     #   Stop once all have been checked or one is found. Avoid using loops. (USE RECURSIONS)
-    def next_unfinished_sublevel(self, index=0):
-        return None
-    
+        def next_unfinished_sublevel(self, index=0):
+            if index >= len(self.curLevel):
+                return None
+            if not self.curLevel[index].finished:
+                return self.curLevel[index]
+            return self.next_unfinished_sublevel(index + 1)
