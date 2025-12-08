@@ -147,18 +147,14 @@ class DeckManager:
 
         cardImages = self.load_card_images(subLevel)
         deck = []
-        #suits y ranks pa armar todas las cartas
-        suits = ['Hearts', "Diamonds", "Clubs", "Spades"]
-        ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', "J", "Q", "K", "A"]
 
         #loop pa combinar cada suit con cada rank
-        for suit in suits:
-            for rank in ranks:
+        for suit in Suit:
+            for rank in Rank:
                 #agarro la img de esa carta
-                image = cardImages[(suit, rank)]
+                image = cardImages.get((suit, rank))
                 if image is None:
                     continue  #si no hay img
-
                 #carta en la lst del deck
                 deck.append(Card(suit=suit, rank=rank, image=image))
 

@@ -27,9 +27,11 @@ def evaluate_hand(hand: list[Card]):
 
     #chequea si hay flush
     is_flush = False
-    for v in suit_count.values():
+    flush_suit = None
+    for suit, v in suit_count.items():
         if v >= 5:
             is_flush = True
+            flush_suit = suit
             break
 
     #dict de cuantas veces aparece cada rank
@@ -59,11 +61,12 @@ def evaluate_hand(hand: list[Card]):
 
     #chequea si hay straight
     is_straight = False
+    straight_cards = []
     number = len(unique_ranks)
     for i in range(number - 4):
-        if unique_ranks[i] + 1 == unique_ranks[i + 1] and unique_ranks[i] + 2 == unique_ranks[i + 2] and unique_ranks[
-            i] + 3 == unique_ranks[i + 3] and unique_ranks[i] + 4 == unique_ranks[i + 4]:
+        if unique_ranks[i] + 1 == unique_ranks[i + 1] and unique_ranks[i] + 2 == unique_ranks[i + 2] and unique_ranks[i] + 3 == unique_ranks[i + 3] and unique_ranks[i] + 4 == unique_ranks[i + 4]:
             is_straight = True
+            straight_cards = [unique_ranks[i], unique_ranks[i+1], unique_ranks[i+2], unique_ranks[i+3], unique_ranks[i+4]]
             break
 
     #lst de counts de cada rank
@@ -79,20 +82,33 @@ def evaluate_hand(hand: list[Card]):
                 x = counts[i]
                 counts[i] = counts[j]
                 counts[j] = x
-
-    #decir q es:
-    if is_flush and is_straight:
-        return "Straight Flush"
+    #decir q es
     if counts[0] == 4:
         return "Four of a Kind"
     if 3 in counts and 2 in counts:
         return "Full House"
+    if is_flush and is_straight:
+        #forman escalera
+        straight_flush_cards = []
+        for card in hand:
+            if card.rank.value in straight_cards:
+                straight_flush_cards.append(card)
+            elif card.rank.value == 14 and 1 in straight_cards:
+                straight_flush_cards.append(card)
+        same_suit = True
+        for card in straight_flush_cards:
+            if card.suit != flush_suit:
+                same_suit = False
+                break
+        if same_suit:
+            return "Straight Flush"
     if is_flush:
         return "Flush"
     if is_straight:
         return "Straight"
     if 3 in counts:
         return "Three of a Kind"
+
     #cuando hay dobles
     doble = 0
     for v in counts:
