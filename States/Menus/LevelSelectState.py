@@ -101,6 +101,34 @@ class LevelSelectState(State):
                 self.nextState = "GameState"
                 self.buttonSound.play()
 
+                boss = lm.curSubLevel.bossLevel
+
+                self.playerInfo.handLimit = self.playerInfo.handLimit
+                self.playerInfo.discardLimit = self.playerInfo.discardLimit
+                self.playerInfo.allowDuplicates = True
+                self.playerInfo.mustPlayExact = None
+                self.playerInfo.disableFaceCards = False
+                self.playerInfo.reduceStraightScore = False
+
+                if boss:
+                    if boss == "The Water":
+                        self.playerInfo.handLimit = 4
+                    elif boss == "The Mark":
+                        self.playerInfo.discardLimit = 1
+                    elif boss == "The House":
+                        self.playerInfo.allowDuplicates = False
+                    elif boss == "The Hook":
+                        self.playerInfo.mustPlayExact = 3
+                    elif boss == "The Manacle":
+                        self.playerInfo.discardLimit = 0
+                    elif boss == "The Needle":
+                        self.playerInfo.handLimit = 3
+                    elif boss == "The Club":
+                        self.playerInfo.disableFaceCards = True
+                    elif boss == "The Goad":
+                        self.playerInfo.reduceStraightScore = True
+                self.playerInfo.roundScore = 0
+
     def drawLevelCards(self):
         # Make sure there's a current level
         if self.playerInfo.levelManager.curLevel is None:
