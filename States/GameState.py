@@ -552,7 +552,6 @@ class GameState(State):
             raw_overkill = (score - target) / target
             bonus = min(5, max(0, raw_overkill - 0.5))
             return int(bonus) + self.calculate_gold_reward(playerInfo, stage=2)
-            return 0
 
     def updateCards(self, posX, posY, cardsDict, cardsList, scale=1.5, spacing=90, baseYOffset=-20, leftShift=40):
         cardsDict.clear()
@@ -831,65 +830,59 @@ class GameState(State):
         #   The last line ensures the Joker is visibly active and its effects are properly applied.
 
         # Joker Effects
-        owned = [joker.name for joker in self.playerInfo.jokers]  # list of owned joker names
-
-
+        procrastinate = False
         if "The Joker" in owned:
             hand_mult += 4
             self.activated_jokers.add("The Joker")
-
 
         if "Michael Myers" in owned:
             hand_mult += random.randint(0, 23)
             self.activated_jokers.add("Michael Myers")
 
-
         if "Fibonacci" in owned:
-            for card in self.cardsSelectedList:
-                if card.rank in [Rank.ACE, Rank.TWO, Rank.THREE, Rank.FIVE, Rank.EIGHT]:
+            fibon_ranks = {Rank.ACE, Rank.TWO, Rank.THREE, Rank.FIVE, Rank.EIGHT}
+            for c in self.cardsSelectedList:
+                if c.rank in fibon_ranks:
                     hand_mult += 8
             self.activated_jokers.add("Fibonacci")
 
-
         if "Gauntlet" in owned:
             total_chips += 250
-            self.hand_size = max(0, self.hand_size - 2)
+            self.playerInfo.amountOfHands = max(0, self.playerInfo.amountOfHands - 2)
             self.activated_jokers.add("Gauntlet")
-
 
         if "Ogre" in owned:
             hand_mult += 3 * len(owned)
             self.activated_jokers.add("Ogre")
 
-
         if "StrawHat" in owned:
+            hands_used = 4 - self.playerInfo.amountOfHands
             total_chips += 100
-            total_chips -= 5 * self.handsPlayedThisRound
+            total_chips -= 5 * hands_used
             self.activated_jokers.add("StrawHat")
-
 
         if "Hog Rider" in owned and hand_name == "Straight":
             total_chips += 100
             self.activated_jokers.add("Hog Rider")
 
-
         if "? Block" in owned and len(self.cardsSelectedList) == 4:
             total_chips += 4
             self.activated_jokers.add("? Block")
 
-
         if "Hogwarts" in owned:
-            for card in self.cardsSelectedList:
-                if card.rank == Rank.ACE:
+            for c in self.cardsSelectedList:
+                if c.rank == Rank.ACE:
                     hand_mult += 4
                     total_chips += 20
             self.activated_jokers.add("Hogwarts")
 
-        if "802" in owned and self.amountOfHands == 0:
+        if "802" in owned:
             procrastinate = True
             self.activated_jokers.add("802")
 
-        procrastinate = False
+        if procrastinate and self.playerInfo.amountOfHands == 0:
+            total_chips *= 2
+            hand_mult *= 2
 
         # commit modified player multiplier and chips
         self.playerInfo.playerMultiplier = hand_mult
