@@ -116,6 +116,14 @@ class LevelSelectState(State):
         #   what unique restriction or ability that boss applies during the round.
         #   This dictionary will later be used to look up and apply special effects based on which boss is active.
         boss_abilities = {
+            "The Mark": "Discard limit reduced to 1",
+            "The Needle": "Hand limit reduced to 3",
+            "The House": "No duplicate ranks allowed",
+            "The Hook": "Must play exactly 3 cards",
+            "The Water": "Hand limit reduced to 4",
+            "The Manacle": "No discards allowed",
+            "The Club": "Face cards give no score",
+            "The Goad": "Straights give reduced score",
 
         }
 
