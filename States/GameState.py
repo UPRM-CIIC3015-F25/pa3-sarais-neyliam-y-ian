@@ -931,7 +931,7 @@ class GameState(State):
         cd = self.cardsSelectedList[0]
         if removeFromHand and cd in self.hand:
             self.hand.remove(cd)  #saco la carta de la mano
-            new = State.deckManager.drawCard(self.deck)  #saco una nueva del deck
+            new = State.deckManager.dealCards(self.deck, numCards=1)[0]  #saco una nueva del deck
             self.hand.append(new)  #meto la nueva pa la mano
 
         #quito la carta de la lst y sigo recursivo pa las demás

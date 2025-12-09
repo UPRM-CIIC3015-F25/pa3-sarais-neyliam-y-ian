@@ -103,8 +103,8 @@ class LevelSelectState(State):
 
                 boss = lm.curSubLevel.bossLevel
 
-                self.playerInfo.handLimit = self.playerInfo.handLimit
-                self.playerInfo.discardLimit = self.playerInfo.discardLimit
+                self.playerInfo.handLimit = self.playerInfo.defaultHandLimit
+                self.playerInfo.discardLimit = self.playerInfo.defaultDiscardLimit
                 self.playerInfo.allowDuplicates = True
                 self.playerInfo.mustPlayExact = None
                 self.playerInfo.disableFaceCards = False
