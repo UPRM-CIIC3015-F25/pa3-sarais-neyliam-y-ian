@@ -534,24 +534,36 @@ class GameState(State):
     #     - Recursive calculation of the overkill bonus (based on how much score exceeds the target)
     #     - A clear base case to stop recursion when all parts are done
     #   Avoid any for/while loops — recursion alone must handle the repetition.
-    def calculate_gold_reward(self, playerInfo, stage=0):
-        if stage >= 2:
-            return 0
+    def calculate_gold_reward(self, playerInfo, stage=0, base=0, bonus=0):
+        if stage == 2:
+            return base + bonus
         if stage == 0:
-            blind = playerInfo.blindType
-            if blind == "SMALL":
+            blind = playerInfo.levelManager.curSubLevel.blind
+            if blind == blind.SMALL:
                 base = 4
-            elif blind == "BIG":
+            elif blind == blind.BIG:
                 base = 8
-            else:
+            elif blind == blind.Boss:
                 base = 10
-            return base + self.calculate_gold_reward(playerInfo, stage=1)
+            else:
+                base = 0
+            return self.calculate_gold_reward(playerInfo, 1,base, 0 )
         if stage == 1:
-            score = playerInfo.score
-            target = playerInfo.target
-            raw_overkill = (score - target) / target
-            bonus = min(5, max(0, raw_overkill - 0.5))
-            return int(bonus) + self.calculate_gold_reward(playerInfo, stage=2)
+            score = playerInfo.roundScore
+            place = playerInfo.levelManager.curSubLevel.score
+            if place > 0:
+                difference = score - place
+                ratio = difference / place
+                two_bonus = ratio * 5
+                if two_bonus < 0:
+                    two_bonus = 0
+                if two_bonus > 5:
+                    two_bonus = 5
+                bonus = two_bonus
+            else:
+                bonus = 0
+            return self.calculate_gold_reward(playerInfo, 2, base, bonus)
+
 
     def updateCards(self, posX, posY, cardsDict, cardsList, scale=1.5, spacing=90, baseYOffset=-20, leftShift=40):
         cardsDict.clear()
