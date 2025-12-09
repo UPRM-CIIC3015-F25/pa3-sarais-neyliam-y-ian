@@ -49,17 +49,6 @@ class LevelManager():
                     self.updateLevels()
                 else:
                     self.curSubLevel = next_sub
-
-                # if self.next_unfinished_sublevel() is None:  # Check if all sublevels in the current ante are finished
-                #     self.p.playerAnte += 1
-                #     # If no more levels exist, set playerWins to True
-                #     if self.p.playerAnte not in self.levelsDict:
-                #         self.curLevel = []
-                #         self.curSubLevel = None
-                #         self.playerWins = True
-                #         return
-                #     self.updateLevels()
-                #     self.curSubLevel = self.curLevel[0]
                 self.p.levelFinished = True  # Signal UI to open LevelSelectState
 
     # TODO (TASK 8) - Create a recursive function that finds the next unfinished sublevel.
