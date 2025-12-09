@@ -103,30 +103,16 @@ class LevelSelectState(State):
 
                 boss = lm.curSubLevel.bossLevel
 
-                self.playerInfo.handLimit = self.playerInfo.defaultHandLimit
-                self.playerInfo.discardLimit = self.playerInfo.defaultDiscardLimit
-                self.playerInfo.allowDuplicates = True
-                self.playerInfo.mustPlayExact = None
-                self.playerInfo.disableFaceCards = False
-                self.playerInfo.reduceStraightScore = False
+                self.playerInfo.handLimit = self.playerInfo.amountOfHands
+                self.playerInfo.discardLimit = self.playerInfo.amountOfDiscards
 
-                if boss:
-                    if boss == "The Water":
-                        self.playerInfo.handLimit = 4
-                    elif boss == "The Mark":
-                        self.playerInfo.discardLimit = 1
-                    elif boss == "The House":
-                        self.playerInfo.allowDuplicates = False
-                    elif boss == "The Hook":
-                        self.playerInfo.mustPlayExact = 3
-                    elif boss == "The Manacle":
-                        self.playerInfo.discardLimit = 0
-                    elif boss == "The Needle":
-                        self.playerInfo.handLimit = 3
-                    elif boss == "The Club":
-                        self.playerInfo.disableFaceCards = True
-                    elif boss == "The Goad":
-                        self.playerInfo.reduceStraightScore = True
+                if boss == "The Water":
+                    self.playerInfo.discardLimit = 0
+                elif boss == "The Manacle":
+                    self.playerInfo.handLimit = max(1, self.playerInfo.handLimit - 1)
+
+                self.playerInfo.amountOfHands = self.playerInfo.handLimit
+                self.playerInfo.amount0fDiscards = self.playerInfo.discardLimit
                 self.playerInfo.roundScore = 0
 
     def drawLevelCards(self):
@@ -150,8 +136,6 @@ class LevelSelectState(State):
             "The Hook": "Must play exactly 3 cards",
             "The Water": "Hand limit reduced to 4",
             "The Manacle": "No discards allowed",
-            "The Club": "Face cards give no score",
-            "The Goad": "Straights give reduced score",
 
         }
 
