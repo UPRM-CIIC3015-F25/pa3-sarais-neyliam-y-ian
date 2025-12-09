@@ -33,11 +33,6 @@ class LevelManager():
         # Pick the first unfinished sublevel as current
         self.curSubLevel = self.next_unfinished_sublevel()
 
-        # for s in self.curLevel:
-        #     if not s.finished:
-        #         self.curSubLevel = s
-        #         break
-        #
     def update(self):
         if self.curSubLevel and not self.curSubLevel.finished:  # Check if current sublevel is finished
             if self.p.roundScore >= self.curSubLevel.score:     # If player's round score meets or exceeds sublevel score requirement
